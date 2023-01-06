@@ -3,6 +3,7 @@
     "outDir": "dist",
     "sourceMap": true,
     "target": "esnext",
+    "baseUrl": "src",
     "module": "commonjs",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
