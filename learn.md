@@ -15,7 +15,7 @@ The client (front-end) can simply connect it by initializing the `io()` in the w
 
 Each socket that is currently connected from front-end can send anything through any event by simply creating the event name through `emit`.
 
-Then server should listen to this event and catch and data sent through it.
+Then server should listen to this event and catch and data sent form it through `on`.
 
 ```ts
 // frontend
@@ -39,5 +39,18 @@ socket.on("chat message", msg => {
 // frontend
 socket.on("chat message", msg => {
     // write to DOM
+})
+```
+
+We can also broadcast message except to the socket-self that send it
+```
+// backend
+socket.on("disconnect", () => {
+    socket.broadcast.emit("disconnected", "a user has been disconnected")
+})
+
+// frontend
+socket.on("disconnected", (msg) => {
+    // write to dom the `msg`
 })
 ```
