@@ -19,8 +19,25 @@ Then server should listen to this event and catch and data sent through it.
 
 ```ts
 // frontend
-io.emit("chat message", "hello from client")
+socket.emit("chat message", "hello from client")
 
 // backend
 socket.on("chat message", msg => console.log(msg))
+```
+
+
+## Broadcast the emitted message
+
+when a socket client has emit the message. The io from server that receive it could send the message to all of the client back
+
+```
+// backend
+socket.on("chat message", msg => {
+    io.emit("chat message", msg)
+})
+
+// frontend
+socket.on("chat message", msg => {
+    // write to DOM
+})
 ```
