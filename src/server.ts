@@ -1,24 +1,33 @@
 import express, { Request, Response } from "express"
 import http from "http"
-import { Server } from "socket.io"
+import { Server, Socket } from "socket.io"
+
+interface ISocket extends Socket {
+    username?: string
+}
 
 const app = express()
 const server = http.createServer(app)
 const io = new Server(server)
 
-app.get("/", (req: Request, res: Response) => {
+app.get("/", (_req: Request, res: Response) => {
     res.sendFile(__dirname + "/index.html")
 })
 
-io.on("connection", (socket) => {
-    socket.broadcast.emit("connected", "a user has joined a conversation")
+const users: string[] = []
 
+io.on("connection", (socket: ISocket) => {
     socket.on("disconnect", () => {
-        socket.broadcast.emit("disconnected", "a user has been disconnected")
+        socket.broadcast.emit("disconnected", `${socket.username} has been disconnected`)
     })
 
-    socket.on("chat message", (msg) => {
-        io.emit("chat message", msg)
+    socket.on("send-message", (msg) => {
+        io.emit("send-message", msg)
+    })
+
+    socket.on("add-username", username => {
+        socket.username = username
+        socket.broadcast.emit("connected", `${socket.username} a user has joined a conversation`)
     })
 })
 

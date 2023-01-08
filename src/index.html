@@ -68,27 +68,33 @@
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        var socket = io();
+        var form = document.getElementById('form')
+        var input = document.getElementById('input')
 
-        var form = document.getElementById('form');
-        var input = document.getElementById('input');
+        var username = prompt("Enter a username", "yakuza")
+        if (!username) {
+            location.reload()
+        }
+
+        var socket = io()
+        socket.emit("add-username", username)
 
         function writeMessageToScreen(message) {
-            var li = document.createElement('li');
-            li.textContent = message;
-            document.getElementById('messages').appendChild(li);
-            window.scrollTo(0, document.body.scrollHeight);
+            var li = document.createElement('li')
+            li.textContent = message
+            document.getElementById('messages').appendChild(li)
+            window.scrollTo(0, document.body.scrollHeight)
         }
 
         form.addEventListener('submit', function (e) {
-            e.preventDefault();
+            e.preventDefault()
             if (input.value) {
-                socket.emit('chat message', input.value);
-                input.value = '';
+                socket.emit('send-message', input.value);
+                input.value = ''
             }
         });
 
-        socket.on('chat message', function (msg) {
+        socket.on('send-message', function (msg) {
             writeMessageToScreen(msg)
         });
 
