@@ -11,20 +11,47 @@ app.get("/", (_req: Request, res: Response) => {
     res.sendFile(__dirname + "/index.html")
 })
 
-const users: string[] = []
+// const users: string[] = []
+class Users {
+    private users: string[]
+
+    constructor() {
+        this.users = []
+    }
+
+    public addUser(username: string ){
+        this.users.push(username)
+    }
+
+    public removeUser(username: string) {
+        this.users = this.users.filter(user => user !== username)
+    }
+
+    public getUsers() {
+        return this.users
+    }
+}
+
+const users = new Users()
 
 io.on("connection", (socket: ISocket) => {
+    socket.on("add-username", username => {
+        socket.username = username
+        socket.broadcast.emit("connected", `${socket.username} a user has joined a conversation`)
+
+        users.addUser(username)
+    })
+
     socket.on("disconnect", () => {
         socket.broadcast.emit("disconnected", `${socket.username} has been disconnected`)
+
+        users.removeUser(socket.username as string)
     })
 
     socket.on("send-message", (msg) => {
         io.emit("send-message", msg)
-    })
 
-    socket.on("add-username", username => {
-        socket.username = username
-        socket.broadcast.emit("connected", `${socket.username} a user has joined a conversation`)
+        console.log(users.getUsers())
     })
 })
 
