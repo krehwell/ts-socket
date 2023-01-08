@@ -1,10 +1,7 @@
 import express, { Request, Response } from "express"
 import http from "http"
 import { Server, Socket } from "socket.io"
-
-interface ISocket extends Socket {
-    username?: string
-}
+import type { ISocket } from "./types/common"
 
 const app = express()
 const server = http.createServer(app)
