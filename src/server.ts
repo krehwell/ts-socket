@@ -56,15 +56,12 @@ io.on("connection", (socket: ISocket) => {
 
     socket.on("send-message", (msg) => {
         io.emit("send-message", msg);
-
-        console.log(users.getUsers());
+        // console.log(users.getUsers());
     });
 
-    socket.on("typing", (a) => {
+    socket.on("typing", () => {
         socket.broadcast.emit("typing", `${socket.username} is typing...`);
     });
-
-    socket.on;
 });
 
 server.listen(3000, () => {
