@@ -88,10 +88,7 @@
 
         // local var
         var username = prompt("Enter a username", "yakuza");
-        if (!username) {
-            location.reload();
-        }
-        var socket = io();
+        var socket = !username ? location.reload() : io();
         socket.emit("add-username", username);
 
         var isImTyping = false;
@@ -100,6 +97,13 @@
         // functions
         function writeMessageToIndicator(message) {
             indicator.innerHTML = message;
+        }
+
+        function writeMessageToScreen(message) {
+            var li = document.createElement("li");
+            li.textContent = message;
+            document.getElementById("messages").appendChild(li);
+            window.scrollTo(0, document.body.scrollHeight);
         }
 
         function finishTyping() {
@@ -116,13 +120,6 @@
                 clearTimeout(timeout);
                 timeout = setTimeout(finishTyping, 5000);
             }
-        }
-
-        function writeMessageToScreen(message) {
-            var li = document.createElement("li");
-            li.textContent = message;
-            document.getElementById("messages").appendChild(li);
-            window.scrollTo(0, document.body.scrollHeight);
         }
 
         // dom listeners
