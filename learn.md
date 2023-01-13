@@ -63,6 +63,9 @@ to exclude him
 
 ## User is typing indicator
 
-Trigger by `socket.emit("typing")` on client and server broadcast it. The rest is handled manually by listening the the event 
-on client (`socket.on("typing", msg => {})`), put timeout to clear the message or even to debounce so that we don't always emit
-the `typing` event
+Trigger by `socket.emit("typing")` on client and server broadcast it. On client, we make sure to not call typing event over and over
+by setting a timeout on when user finished typing for 5 second. If after 5 seconds user not typing anything, the timeout will then emit
+`socket.emit("not-typing")` event. 
+
+The indicator is held by the message broadcasted by server from `.on("typing")`, and client render it to DOM. When `not-typing` is emitted,
+the server broadcast to typing but send empty string (`""`) as the message (`socket.broadcast.emit("typing", "")`)

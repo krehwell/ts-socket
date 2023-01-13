@@ -62,6 +62,10 @@ io.on("connection", (socket: ISocket) => {
     socket.on("typing", () => {
         socket.broadcast.emit("typing", `${socket.username} is typing...`);
     });
+
+    socket.on("not-typing", () => {
+        socket.broadcast.emit("typing", "");
+    })
 });
 
 server.listen(3000, () => {

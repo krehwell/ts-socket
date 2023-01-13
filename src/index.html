@@ -94,7 +94,7 @@
         var socket = io();
         socket.emit("add-username", username);
 
-        var isTyping = false;
+        var isImTyping = false;
         var typingTimeout = null;
 
         // functions
@@ -102,8 +102,20 @@
             indicator.innerHTML = message;
         }
 
+        function finishTyping() {
+            isImTyping = false;
+            socket.emit("not-typing");
+        }
+
         function fireTyping() {
-            socket.emit("typing");
+            if (!isImTyping) {
+                isImTyping = true;
+                socket.emit("typing");
+                timeout = setTimeout(finishTyping, 5000);
+            } else {
+                clearTimeout(timeout);
+                timeout = setTimeout(finishTyping, 5000);
+            }
         }
 
         function writeMessageToScreen(message) {
