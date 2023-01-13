@@ -59,3 +59,10 @@ socket.on("disconnected", (msg) => {
 
 We identified it manually by keeping the `username` (example) in a bucket. Then whenever someone leaves or disconnected, we just filter the array 
 to exclude him
+
+
+## User is typing indicator
+
+Trigger by `socket.emit("typing")` on client and server broadcast it. The rest is handled manually by listening the the event 
+on client (`socket.on("typing", msg => {})`), put timeout to clear the message or even to debounce so that we don't always emit
+the `typing` event

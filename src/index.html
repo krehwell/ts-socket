@@ -81,18 +81,23 @@
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script>
+        // dom var
         var form = document.getElementById("form");
         var input = document.getElementById("input");
         var indicator = document.getElementById("indicator");
 
+        // local var
         var username = prompt("Enter a username", "yakuza");
         if (!username) {
             location.reload();
         }
-
         var socket = io();
         socket.emit("add-username", username);
 
+        var isTyping = false;
+        var typingTimeout = null;
+
+        // functions
         function writeMessageToIndicator(message) {
             indicator.innerHTML = message;
         }
@@ -101,10 +106,6 @@
             socket.emit("typing");
         }
 
-        socket.on("typing", function (message) {
-            writeMessageToIndicator(message);
-        });
-
         function writeMessageToScreen(message) {
             var li = document.createElement("li");
             li.textContent = message;
@@ -112,12 +113,18 @@
             window.scrollTo(0, document.body.scrollHeight);
         }
 
+        // dom listeners
         form.addEventListener("submit", function (e) {
             e.preventDefault();
             if (input.value) {
                 socket.emit("send-message", input.value);
                 input.value = "";
             }
+        });
+
+        // socket events
+        socket.on("typing", function (message) {
+            writeMessageToIndicator(message);
         });
 
         socket.on("send-message", function (msg) {

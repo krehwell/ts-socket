@@ -1,6 +1,5 @@
-import type { Socket } from "socket.io"
+import type { Socket } from "socket.io";
 
 export interface ISocket extends Socket {
-    username?: string
+    username?: string;
 }
-
