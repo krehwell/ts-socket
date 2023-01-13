@@ -46,6 +46,8 @@ io.on("connection", (socket: ISocket) => {
     });
 
     socket.on("disconnect", () => {
+        socket.broadcast.emit("typing", "");
+
         socket.broadcast.emit(
             "disconnected",
             `${socket.username} has been disconnected`,
