@@ -54,3 +54,8 @@ socket.on("disconnected", (msg) => {
     // write to dom the `msg`
 })
 ```
+
+## Identifying the user
+
+We identified it manually by keeping the `username` (example) in a bucket. Then whenever someone leaves or disconnected, we just filter the array 
+to exclude him
