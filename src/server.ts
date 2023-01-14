@@ -37,12 +37,15 @@ const users = new Users();
 io.on("connection", (socket: ISocket) => {
     socket.on("add-username", (username) => {
         socket.username = username;
+
         socket.broadcast.emit(
             "connected",
             `${socket.username} a user has joined a conversation`,
         );
 
         users.addUser(username);
+
+        io.emit("update-new-users", users.getUsers());
     });
 
     socket.on("disconnect", () => {
@@ -54,10 +57,12 @@ io.on("connection", (socket: ISocket) => {
         );
 
         users.removeUser(socket.username as string);
+
+        io.emit("update-new-users", users.getUsers());
     });
 
     socket.on("send-message", (msg) => {
-        io.emit("send-message", msg);
+        socket.emit("send-message", msg);
         // console.log(users.getUsers());
     });
 

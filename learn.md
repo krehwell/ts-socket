@@ -69,3 +69,21 @@ by setting a timeout on when user finished typing for 5 second. If after 5 secon
 
 The indicator is held by the message broadcasted by server from `.on("typing")`, and client render it to DOM. When `not-typing` is emitted,
 the server broadcast to typing but send empty string (`""`) as the message (`socket.broadcast.emit("typing", "")`)
+
+## Show who's online
+
+On server, we emit the event anytime new user has been connected or disconnected. On client we listen to this event to render the new users currently online
+```
+// backend
+io.on("connection", (socket: ISocket) => {
+    socket.on("add-username", (username) => {
+        io.emit("update-new-users", users.getUsers())
+    })
+})
+
+// frontend
+socket.on("update-new-users", function (users) {
+    renderUsers(users)
+});
+```
+

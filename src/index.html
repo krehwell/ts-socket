@@ -57,6 +57,16 @@
             color: #000;
         }
 
+        .user-online-container {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            width: 11rem;
+            background-color: lightgray;
+        }
+
+        #user-online {}
+
         #messages {
             list-style-type: none;
             margin: 0;
@@ -75,6 +85,13 @@
 
 <body>
     <ul id="messages"></ul>
+    <div class="user-online-container">
+        online:
+        <li id="user-online">
+            <ul>
+            </ul>
+        </li>
+    </div>
     <form id="form" action="">
         <div id="indicator"></div>
         <input id="input" autocomplete="off" onkeypress="fireTyping()" /><button>Send</button>
@@ -85,6 +102,7 @@
         var form = document.getElementById("form");
         var input = document.getElementById("input");
         var indicator = document.getElementById("indicator");
+        var userList = document.getElementById("user-online");
 
         // local var
         var username = prompt("Enter a username", "yakuza");
@@ -95,6 +113,15 @@
         var typingTimeout = null;
 
         // functions
+        function renderUsers(users = [""]) {
+            userList.innerHTML = "";
+            users.map(user => {
+                const ul = document.createElement("ul");
+                ul.textContent = user;
+                userList.appendChild(ul);
+            });
+        }
+
         function writeMessageToIndicator(message) {
             indicator.innerHTML = message;
         }
@@ -132,6 +159,10 @@
         });
 
         // socket events
+        socket.on("update-new-users", function (users) {
+            renderUsers(users);
+        });
+
         socket.on("typing", function (message) {
             writeMessageToIndicator(message);
         });
