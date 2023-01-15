@@ -45,6 +45,7 @@
             border-radius: 3px;
             outline: none;
             color: #fff;
+            min-width: 5rem;
         }
 
         #indicator {
@@ -103,7 +104,17 @@
     </div>
     <form id="form" action="">
         <div id="indicator"></div>
-        <input id="input" autocomplete="off" onkeypress="fireTyping()" /><button>Send</button>
+        <input id="input" autocomplete="off" onkeypress="fireTyping()" />
+        <div style="padding: 0rem 1rem; margin: auto">
+            <label for="users">Send To:</label>
+            <select name="users" id="users">
+                <option value="all">All</option>
+                <option value="yakuza">yakuza</option>
+                <option value="suzuki">suzuki</option>
+                <option value="ponkai">ponkai</option>
+            </select>
+        </div>
+        <button>Send</button>
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script>
