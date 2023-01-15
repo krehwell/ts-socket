@@ -65,6 +65,14 @@
             background-color: lightgray;
         }
 
+        .user-just-enter {
+            color: green;
+        }
+
+        .user-just-leave {
+            color: red;
+        }
+
         #user-online {
             list-style-type: none;
         }
@@ -100,7 +108,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         // constants
-        const TYPING_TIMEOUT = 2000
+        const TYPING_TIMEOUT = 2000;
 
         // dom var
         var form = document.getElementById("form");
@@ -132,7 +140,7 @@
 
         function writeMessageToScreen(message) {
             var li = document.createElement("li");
-            li.textContent = message;
+            li.innerHTML = message;
             document.getElementById("messages").appendChild(li);
             window.scrollTo(0, document.body.scrollHeight);
         }
@@ -176,11 +184,15 @@
         });
 
         socket.on("disconnected", function (msg) {
-            writeMessageToScreen(msg);
+            writeMessageToScreen(
+                `<span class="user-just-leave">${msg}</span>`,
+            );
         });
 
         socket.on("connected", function (msg) {
-            writeMessageToScreen(msg);
+            writeMessageToScreen(
+                `<span class="user-just-enter">${msg}</span>`,
+            );
         });
     </script>
 </body>

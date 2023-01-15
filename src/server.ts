@@ -39,6 +39,10 @@ io.on("connection", (socket: ISocket) => {
         io.emit("update-new-users", usernames);
     };
 
+    const emitTyping = (msg: string = "") => {
+        socket.broadcast.emit("typing", msg);
+    };
+
     socket.on("add-username", (username) => {
         socket.username = username;
 
@@ -74,16 +78,16 @@ io.on("connection", (socket: ISocket) => {
     });
 
     socket.on("send-message", (msg) => {
-        socket.broadcast.emit("send-message", msg);
+        io.emit("send-message", msg);
         // console.log(users.getUsers());
     });
 
     socket.on("typing", () => {
-        socket.broadcast.emit("typing", `${socket.username} is typing...`);
+        emitTyping(`${socket.username} is typing...`);
     });
 
     socket.on("not-typing", () => {
-        socket.broadcast.emit("typing", "");
+        emitTyping("");
     });
 });
 
