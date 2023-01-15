@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import http from "http";
 import { Server } from "socket.io";
-import type { ISocket } from "./types/common";
+import type { ISocket, IUser } from "./types/common";
 
 const app = express();
 const server = http.createServer(app);
@@ -11,20 +11,19 @@ app.get("/", (_req: Request, res: Response) => {
     res.sendFile(__dirname + "/index.html");
 });
 
-// const users: string[] = []
 class Users {
-    private users: string[];
+    private users: IUser[];
 
     constructor() {
         this.users = [];
     }
 
-    public addUser(username: string) {
-        this.users.push(username);
+    public addUser(user: IUser) {
+        this.users.push(user);
     }
 
-    public removeUser(username: string) {
-        this.users = this.users.filter((user) => user !== username);
+    public removeUser(user: IUser) {
+        this.users = this.users.filter((u) => u.id !== user.id);
     }
 
     public getUsers() {
@@ -35,6 +34,11 @@ class Users {
 const users = new Users();
 
 io.on("connection", (socket: ISocket) => {
+    const emitUpdateNewUsers = () => {
+        const usernames = users.getUsers().map((u) => u.username);
+        io.emit("update-new-users", usernames);
+    };
+
     socket.on("add-username", (username) => {
         socket.username = username;
 
@@ -43,9 +47,13 @@ io.on("connection", (socket: ISocket) => {
             `${socket.username} a user has joined a conversation`,
         );
 
-        users.addUser(username);
+        const newUser: IUser = {
+            username,
+            id: socket.id,
+        };
+        users.addUser(newUser);
 
-        io.emit("update-new-users", users.getUsers());
+        emitUpdateNewUsers();
     });
 
     socket.on("disconnect", () => {
@@ -56,9 +64,13 @@ io.on("connection", (socket: ISocket) => {
             `${socket.username} has been disconnected`,
         );
 
-        users.removeUser(socket.username as string);
+        const user: IUser = {
+            username: socket.username as string,
+            id: socket.id,
+        };
+        users.removeUser(user);
 
-        io.emit("update-new-users", users.getUsers());
+        emitUpdateNewUsers();
     });
 
     socket.on("send-message", (msg) => {
@@ -72,7 +84,7 @@ io.on("connection", (socket: ISocket) => {
 
     socket.on("not-typing", () => {
         socket.broadcast.emit("typing", "");
-    })
+    });
 });
 
 server.listen(3000, () => {

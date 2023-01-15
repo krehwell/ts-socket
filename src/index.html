@@ -90,8 +90,7 @@
     <div class="user-online-container">
         online:
         <li id="user-online">
-            <ul>
-            </ul>
+            <ul></ul>
         </li>
     </div>
     <form id="form" action="">
@@ -100,6 +99,9 @@
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script>
+        // constants
+        const TYPING_TIMEOUT = 2000
+
         // dom var
         var form = document.getElementById("form");
         var input = document.getElementById("input");
@@ -117,7 +119,7 @@
         // functions
         function renderUsers(users = [""]) {
             userList.innerHTML = "";
-            users.map(user => {
+            users.map((user) => {
                 const ul = document.createElement("ul");
                 ul.textContent = user;
                 userList.appendChild(ul);
@@ -144,10 +146,10 @@
             if (!isImTyping) {
                 isImTyping = true;
                 socket.emit("typing");
-                timeout = setTimeout(finishTyping, 5000);
+                timeout = setTimeout(finishTyping, TYPING_TIMEOUT);
             } else {
                 clearTimeout(timeout);
-                timeout = setTimeout(finishTyping, 5000);
+                timeout = setTimeout(finishTyping, TYPING_TIMEOUT);
             }
         }
 
