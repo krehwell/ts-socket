@@ -135,12 +135,18 @@
 
         // functions
         function renderUsers(users = [{username: "", id: ""}]) {
+            const myId = window.sessionStorage.getItem("id");
+
             // users online list
             userList.innerHTML = "";
-            users.map((user) => {
+            users.map(({ username, id }) => {
                 const ul = document.createElement("ul");
-                ul.setAttribute("id", user.id);
-                ul.textContent = user.username;
+                ul.setAttribute("id", id);
+                ul.textContent = function(){
+                    const isMe = myId === id;
+                    const suffix = isMe ? " (me)" : "";
+                    return username + suffix;
+                }()
                 userList.appendChild(ul);
             });
 
@@ -150,7 +156,6 @@
                 const username = users[i].username;
                 const id = users[i].id;
 
-                const myId = window.sessionStorage.getItem("id");
                 if (id === myId) {
                     continue;
                 }
