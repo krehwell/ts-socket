@@ -81,6 +81,12 @@ io.on("connection", (socket: ISocket) => {
         // console.log(users.getUsers());
     });
 
+    socket.on("send-private-message", ({ msg, to }) => {
+        socket
+            .to(to)
+            .emit("new-message", msg + ` (private: ${socket.username})`);
+    });
+
     socket.on("typing", () => {
         emitTyping(`${socket.username} is typing...`);
     });

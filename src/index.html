@@ -134,7 +134,7 @@
         var typingTimeout = null;
 
         // functions
-        function renderUsers(users = [{ username: "", id: "" }]) {
+        function renderUsers(users = [{username: "", id: ""}]) {
             // users online list
             userList.innerHTML = "";
             users.map((user) => {
@@ -147,7 +147,7 @@
             // users send to box
             for (var i = 0; i < users.length; i++) {
                 const username = users[i].username;
-                const id = users[i].id
+                const id = users[i].id;
 
                 const option = document.createElement("option");
                 option.setAttribute("value", id);
@@ -187,11 +187,24 @@
         // dom listeners
         form.addEventListener("submit", function (e) {
             e.preventDefault();
-            if (input.value) {
-                socket.emit("send-message", input.value);
-                input.value = "";
-                finishTyping();
+
+            if (!input.value) {
+                return;
             }
+
+            if (sendTo.value !== "all") {
+                // send privately
+                socket.emit("send-private-message", {
+                    msg: input.value,
+                    to: sendTo.value,
+                });
+            } else {
+                // emit to all
+                socket.emit("send-message", input.value);
+            }
+
+            input.value = "";
+            finishTyping();
         });
 
         // socket events
