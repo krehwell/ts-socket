@@ -203,7 +203,7 @@
             writeMessageToIndicator(message);
         });
 
-        socket.on("send-message", function (msg) {
+        socket.on("new-message", function (msg) {
             writeMessageToScreen(msg);
         });
 

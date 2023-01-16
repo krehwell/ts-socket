@@ -77,7 +77,7 @@ io.on("connection", (socket: ISocket) => {
     });
 
     socket.on("send-message", (msg) => {
-        io.emit("send-message", msg);
+        io.emit("new-message", msg);
         // console.log(users.getUsers());
     });
 
