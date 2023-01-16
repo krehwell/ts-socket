@@ -106,12 +106,9 @@
         <div id="indicator"></div>
         <input id="input" autocomplete="off" onkeypress="fireTyping()" />
         <div style="padding: 0rem 1rem; margin: auto">
-            <label for="users">Send To:</label>
-            <select name="users" id="users">
+            <label for="send-to">Send To:</label>
+            <select name="users" id="send-to">
                 <option value="all">All</option>
-                <option value="yakuza">yakuza</option>
-                <option value="suzuki">suzuki</option>
-                <option value="ponkai">ponkai</option>
             </select>
         </div>
         <button>Send</button>
@@ -126,6 +123,7 @@
         var input = document.getElementById("input");
         var indicator = document.getElementById("indicator");
         var userList = document.getElementById("user-online");
+        var sendTo = document.getElementById("send-to");
 
         // local var
         var username = prompt("Enter a username", "yakuza");
@@ -136,13 +134,27 @@
         var typingTimeout = null;
 
         // functions
-        function renderUsers(users = [""]) {
+        function renderUsers(users = [{ username: "", id: "" }]) {
+            // users online list
             userList.innerHTML = "";
             users.map((user) => {
                 const ul = document.createElement("ul");
-                ul.textContent = user;
+                ul.setAttribute("id", user.id);
+                ul.textContent = user.username;
                 userList.appendChild(ul);
             });
+
+            // users send to box
+            for (var i = 0; i < users.length; i++) {
+                const username = users[i].username;
+                const id = users[i].id
+
+                const option = document.createElement("option");
+                option.setAttribute("value", id);
+                option.textContent = username;
+
+                sendTo.options[i + 1] = option;
+            }
         }
 
         function writeMessageToIndicator(message) {
@@ -178,6 +190,7 @@
             if (input.value) {
                 socket.emit("send-message", input.value);
                 input.value = "";
+                finishTyping();
             }
         });
 

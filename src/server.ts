@@ -35,8 +35,7 @@ const users = new Users();
 
 io.on("connection", (socket: ISocket) => {
     const emitUpdateNewUsers = () => {
-        const usernames = users.getUsers().map((u) => u.username);
-        io.emit("update-new-users", usernames);
+        io.emit("update-new-users", users.getUsers());
     };
 
     const emitTyping = (msg: string = "") => {
