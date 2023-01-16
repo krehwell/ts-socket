@@ -84,6 +84,25 @@ io.on("connection", (socket: ISocket) => {
 // frontend
 socket.on("update-new-users", function (users) {
     renderUsers(users)
-});
+})
 ```
 
+## Send private message
+
+Private message can be sent from server using `.to(id)` before emit. Then, client (the `.to(id)`) just need to listen and render the message since 
+the emitted only received to him
+
+```
+// client
+socket.emit("send-private-message", {
+    msg: input.value,
+    to: sendTo.id,
+})
+
+// server
+socket.on("send-private-message", ({ msg, to }) => {
+    socket
+        .to(to)
+        .emit("new-message", msg + ` (private: ${socket.username})`)
+})
+```
