@@ -56,7 +56,11 @@ io.on("connection", (socket: ISocket) => {
         };
         users.addUser(newUser);
 
-        emitUpdateNewUsers();
+        socket.emit("assign-id-to-self", socket.id);
+
+        setTimeout(() => {
+            emitUpdateNewUsers();
+        }, 1000);
     });
 
     socket.on("disconnect", () => {

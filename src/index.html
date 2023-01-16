@@ -145,15 +145,22 @@
             });
 
             // users send to box
+            sendTo.innerHTML = `<option value="all">All</option>`;
             for (var i = 0; i < users.length; i++) {
                 const username = users[i].username;
                 const id = users[i].id;
+
+                const myId = window.sessionStorage.getItem("id");
+                if (id === myId) {
+                    continue;
+                }
 
                 const option = document.createElement("option");
                 option.setAttribute("value", id);
                 option.textContent = username;
 
-                sendTo.options[i + 1] = option;
+                const nextOption = sendTo.options.length
+                sendTo.options[nextOption] = option;
             }
         }
 
@@ -218,6 +225,10 @@
 
         socket.on("new-message", function (msg) {
             writeMessageToScreen(msg);
+        });
+
+        socket.on("assign-id-to-self", (id) => {
+            window.sessionStorage.setItem("id", id);
         });
 
         socket.on("disconnected", function (msg) {
