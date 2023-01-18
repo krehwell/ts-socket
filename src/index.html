@@ -139,14 +139,14 @@
 
             // users online list
             userList.innerHTML = "";
-            users.map(({ username, id }) => {
+            users.map(({username, id}) => {
                 const ul = document.createElement("ul");
                 ul.setAttribute("id", id);
-                ul.textContent = function(){
+                ul.textContent = (function () {
                     const isMe = myId === id;
                     const suffix = isMe ? " (me)" : "";
                     return username + suffix;
-                }()
+                })();
                 userList.appendChild(ul);
             });
 
@@ -164,7 +164,7 @@
                 option.setAttribute("value", id);
                 option.textContent = username;
 
-                const nextOption = sendTo.options.length
+                const nextOption = sendTo.options.length;
                 sendTo.options[nextOption] = option;
             }
         }
@@ -196,6 +196,15 @@
             }
         }
 
+        function writeListOfUsernamesTyping(users) {
+            const listOfUsernamesTyping = users.map((u) => u.username);
+            const isOrAre = listOfUsernamesTyping.length > 1 ? "are" : "is";
+
+            return (
+                listOfUsernamesTyping.join(", ") + ` ${isOrAre} typing...`
+            );
+        }
+
         // dom listeners
         form.addEventListener("submit", function (e) {
             e.preventDefault();
@@ -224,8 +233,14 @@
             renderUsers(users);
         });
 
-        socket.on("typing", function (message) {
-            writeMessageToIndicator(message);
+        socket.on("typing", function (_users) {
+            const myId = window.sessionStorage.getItem("id");
+            const users = _users.filter((user) => user.id !== myId);
+            if (users.length) {
+                writeMessageToIndicator(writeListOfUsernamesTyping(users));
+            } else {
+                writeMessageToIndicator("");
+            }
         });
 
         socket.on("new-message", function (msg) {

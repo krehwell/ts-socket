@@ -39,8 +39,8 @@ class Users {
         });
     }
 
-    public getListOfUsernamesTyping() {
-        return this.users.filter((u) => u.isTyping).map((u) => u.username);
+    public getListOfUsersTyping() {
+        return this.users.filter((u) => u.isTyping);
     }
 }
 
@@ -51,15 +51,8 @@ io.on("connection", (socket: ISocket) => {
         io.emit("update-new-users", users.getUsers());
     };
 
-    const emitTyping = (msg: string = "") => {
-        io.emit("typing", msg);
-    };
-
-    const writeListOfUsernamesTyping = () => {
-        const listOfUsernamesTyping = users.getListOfUsernamesTyping();
-        const isOrAre = listOfUsernamesTyping.length > 1 ? "are" : "is";
-
-        return listOfUsernamesTyping.join(", ") + ` ${isOrAre} typing...`;
+    const emitTyping = () => {
+        io.emit("typing", users.getListOfUsersTyping());
     };
 
     socket.on("add-username", (username) => {
@@ -113,17 +106,12 @@ io.on("connection", (socket: ISocket) => {
 
     socket.on("typing", () => {
         users.setUserIsTypingById(socket.id, true);
-        emitTyping(writeListOfUsernamesTyping());
+        emitTyping();
     });
 
     socket.on("not-typing", () => {
         users.setUserIsTypingById(socket.id, false);
-
-        if (users.getListOfUsernamesTyping().length) {
-            emitTyping(writeListOfUsernamesTyping());
-        } else {
-            emitTyping("");
-        }
+        emitTyping();
     });
 });
 
