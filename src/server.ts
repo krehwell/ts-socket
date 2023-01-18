@@ -29,6 +29,19 @@ class Users {
     public getUsers() {
         return this.users;
     }
+
+    public setUserIsTypingById(id: string, isTyping: boolean) {
+        this.users = this.users.map((u) => {
+            if (u.id === id) {
+                u.isTyping = isTyping;
+            }
+            return u
+        });
+    }
+
+    public getListOfUsernamesTyping() {
+        return this.users.filter((u) => u.isTyping).map((u) => u.username);
+    }
 }
 
 const users = new Users();
@@ -38,8 +51,15 @@ io.on("connection", (socket: ISocket) => {
         io.emit("update-new-users", users.getUsers());
     };
 
-    const emitTyping = (msg: string = "") => {
+    const broadcastTyping = (msg: string = "") => {
         socket.broadcast.emit("typing", msg);
+    };
+
+    const writeListOfUsernamesTyping = () => {
+        const listOfUsernamesTyping = users.getListOfUsernamesTyping();
+        const isOrAre = listOfUsernamesTyping.length > 1 ? "are" : "is";
+
+        return listOfUsernamesTyping.join(", ") + ` ${isOrAre} typing...`;
     };
 
     socket.on("add-username", (username) => {
@@ -92,14 +112,21 @@ io.on("connection", (socket: ISocket) => {
     });
 
     socket.on("typing", () => {
-        emitTyping(`${socket.username} is typing...`);
+        users.setUserIsTypingById(socket.id, true);
+        broadcastTyping(writeListOfUsernamesTyping());
     });
 
     socket.on("not-typing", () => {
-        emitTyping("");
+        users.setUserIsTypingById(socket.id, false);
+
+        if (users.getListOfUsernamesTyping().length) {
+            broadcastTyping(writeListOfUsernamesTyping());
+        } else {
+            broadcastTyping("");
+        }
     });
 });
 
 server.listen(3000, () => {
-    console.log("listening on *:3000");
+    console.log("listening on http://localhost:3000");
 });

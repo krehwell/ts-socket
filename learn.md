@@ -106,3 +106,7 @@ socket.on("send-private-message", ({ msg, to }) => {
         .emit("new-message", msg + ` (private: ${socket.username})`)
 })
 ```
+
+## Check who are typings
+
+Each user object should have `isTyping` property

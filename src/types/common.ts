@@ -7,4 +7,5 @@ export interface ISocket extends Socket {
 export interface IUser {
     id: string;
     username: string;
+    isTyping?: boolean;
 }
