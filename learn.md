@@ -2,7 +2,17 @@
 
 I'm using socket.io here
 
-We first initialize the server and bundle it all in an `http` so that we can bundle `io`(socket.io) in the server too
+Start server with `yarn dev` and navigate to `localhost:3000`
+
+Features but not limited:
+    - Broadcast a message to connected users when someone connects or disconnects
+    - Add support for nicknames
+    - Don’t send the same message to the user that sent it. Instead, append the message directly as soon as he/she presses enter
+    - Add “{user} is typing” functionality
+    - Support multiple typing tracker
+    - Show who’s online
+    - Add private messaging
+
 
 ## socket.io
 
@@ -17,7 +27,7 @@ Each socket that is currently connected from front-end can send anything through
 
 Then server should listen to this event and catch and data sent form it through `on`.
 
-```ts
+```typescript
 // frontend
 socket.emit("chat message", "hello from client")
 
@@ -30,7 +40,7 @@ socket.on("chat message", msg => console.log(msg))
 
 when a socket client has emit the message. The io from server that receive it could send the message to all of the client back
 
-```
+```typescript
 // backend
 socket.on("chat message", msg => {
     io.emit("chat message", msg)
@@ -43,7 +53,7 @@ socket.on("chat message", msg => {
 ```
 
 We can also broadcast message except to the socket-self that send it
-```
+```typescript
 // backend
 socket.on("disconnect", () => {
     socket.broadcast.emit("disconnected", "a user has been disconnected")
@@ -73,7 +83,7 @@ the server broadcast to typing but send empty string (`""`) as the message (`soc
 ## Show who's online
 
 On server, we emit the event anytime new user has been connected or disconnected. On client we listen to this event to render the new users currently online
-```
+```typescript
 // backend
 io.on("connection", (socket: ISocket) => {
     socket.on("add-username", (username) => {
@@ -92,7 +102,7 @@ socket.on("update-new-users", function (users) {
 Private message can be sent from server using `.to(id)` before emit. Then, client (the `.to(id)`) just need to listen and render the message since 
 the emitted only received to him
 
-```
+```typescript
 // client
 socket.emit("send-private-message", {
     msg: input.value,
