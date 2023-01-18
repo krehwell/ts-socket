@@ -35,7 +35,7 @@ class Users {
             if (u.id === id) {
                 u.isTyping = isTyping;
             }
-            return u
+            return u;
         });
     }
 
@@ -51,8 +51,8 @@ io.on("connection", (socket: ISocket) => {
         io.emit("update-new-users", users.getUsers());
     };
 
-    const broadcastTyping = (msg: string = "") => {
-        socket.broadcast.emit("typing", msg);
+    const emitTyping = (msg: string = "") => {
+        io.emit("typing", msg);
     };
 
     const writeListOfUsernamesTyping = () => {
@@ -113,16 +113,16 @@ io.on("connection", (socket: ISocket) => {
 
     socket.on("typing", () => {
         users.setUserIsTypingById(socket.id, true);
-        broadcastTyping(writeListOfUsernamesTyping());
+        emitTyping(writeListOfUsernamesTyping());
     });
 
     socket.on("not-typing", () => {
         users.setUserIsTypingById(socket.id, false);
 
         if (users.getListOfUsernamesTyping().length) {
-            broadcastTyping(writeListOfUsernamesTyping());
+            emitTyping(writeListOfUsernamesTyping());
         } else {
-            broadcastTyping("");
+            emitTyping("");
         }
     });
 });
