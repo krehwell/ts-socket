@@ -109,4 +109,6 @@ socket.on("send-private-message", ({ msg, to }) => {
 
 ## Check who are typings
 
-Each user object should have `isTyping` property
+Each user object on server should have `isTyping` property. Typing event now should send list of all users who are typing instead of the message.
+Then the client should handle on how it should show this "who are typing" text on indicator. Client can filter to exclude himself from this list so that 
+it should not show if himself is currently typing on his own indicator
